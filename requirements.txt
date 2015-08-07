@@ -23,3 +23,6 @@ django-auth-ldap
 
 # working days
 workdays
+
+# Django Summernote
+django-summernote
