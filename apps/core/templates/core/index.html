@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Página inicial{% endblock %}
+
+{% block content %}
+<div class="row">
+
+    <div class="col-md-6 col-xs-12">
+
+        <div class="widget stacked">
+
+            <div class="widget-header">
+                <i class="icon-star"></i>
+                <h3>Tickets abertos</h3>
+            </div> <!-- /widget-header -->
+
+            <div class="widget-content">
+
+                <div class="stats">
+
+                    <div class="stat">
+                        <span class="stat-value">5</span>
+                        Projetos
+                    </div> <!-- /stat -->
+
+                    <div class="stat">
+                        <span class="stat-value">7</span>
+                        Desenvolvimento
+                    </div> <!-- /stat -->
+
+                    <div class="stat">
+                        <span class="stat-value">4</span>
+                        Sustentação
+                    </div> <!-- /stat -->
+
+                </div> <!-- /stats -->
+
+            </div> <!-- /widget-content -->
+
+        </div> <!-- /widget -->
+
+    </div> <!-- /span6 -->
+
+
+    <div class="col-md-6 col-xs-12">
+
+        <div class="widget stacked">
+
+            <div class="widget-header">
+                <i class="icon-bookmark"></i>
+                <h3>Acesso rápido</h3>
+            </div> <!-- /widget-header -->
+
+            <div class="widget-content">
+
+                <div class="shortcuts">
+
+                    <a href="javascript:;" class="shortcut">
+                        <i class="shortcut-icon icon-plus"></i>
+                        <span class="shortcut-label">Novo ticket</span>
+                    </a>
+
+                    <a href="javascript:;" class="shortcut">
+                        <i class="shortcut-icon icon-cogs"></i>
+                        <span class="shortcut-label">Sustentação</span>
+                    </a>
+
+                    <a href="javascript:;" class="shortcut">
+                        <i class="shortcut-icon icon-coffee"></i>
+                        <span class="shortcut-label">Desenvolvimento</span>
+                    </a>
+
+                    <a href="javascript:;" class="shortcut">
+                        <i class="shortcut-icon icon-laptop"></i>
+                        <span class="shortcut-label">Projetos</span>
+                    </a>
+
+                </div> <!-- /shortcuts -->
+
+            </div> <!-- /widget-content -->
+
+        </div> <!-- /widget -->
+
+    </div> <!-- /span6 -->
+
+</div> <!-- /row -->
+{% endblock %}
