@@ -1,0 +1,18 @@
+# For webfaction: while read line; do easy_install-2.7 $line; done < requirements.txt
+# Django
+django==1.8.3
+django-staticfiles
+django-secure
+
+# PIL
+# apt-get install libjpeg-dev libfreetype6-dev zlib1g-dev libpng12-dev
+Pillow
+
+# Theme for django admin
+django-flat-theme
+
+# postgres
+psycopg2
+
+# django-extra-views
+django-extra-views
