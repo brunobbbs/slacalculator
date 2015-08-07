@@ -20,3 +20,6 @@ django-extra-views
 # LDAP
 python-ldap
 django-auth-ldap
+
+# working days
+workdays
