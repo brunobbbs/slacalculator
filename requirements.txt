@@ -16,3 +16,7 @@ psycopg2
 
 # django-extra-views
 django-extra-views
+
+# LDAP
+python-ldap
+django-auth-ldap
