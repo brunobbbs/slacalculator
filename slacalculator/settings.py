@@ -44,6 +44,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'core',
+    'utils',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -132,6 +134,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+    "apps.utils.context_processors.current_user",
 )
 
 # File system storage - fix ascii errors on filename
