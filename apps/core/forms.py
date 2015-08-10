@@ -2,8 +2,6 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
-
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -62,7 +60,7 @@ class TicketForm(forms.ModelForm):
                 status = Status(
                     state="open",
                     ticket=obj,
-                    start_date=datetime.now()
+                    start_date=obj.start_date
                 )
                 status.save()
                 return obj
@@ -81,6 +79,7 @@ class StatusForm(forms.ModelForm):
             'state': forms.HiddenInput(),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
             'start_date': forms.TextInput(attrs={'class': 'form-control'}),
+            'end_date': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def save(self, commit=True):
