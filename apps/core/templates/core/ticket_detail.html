@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Tickets cadastrados{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{% static 'css/timeline.css' %}"/>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'tickets:list' %}">Tickets</a></li>
+    <li class="active">{{ object }}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="widget stacked">
+
+            <div class="widget-header">
+                <i class="icon-ticket"></i>
+                <h3>{{ object }}</h3>
+            </div>
+
+            <div class="widget-content">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</td>
+                            <th>Título</td>
+                            <th>Aberto</td>
+                            <th>Previsto</th>
+                            <th>Fechado</td>
+                            <th>SLA</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ object.identifier }}</td>
+                            <td>{{ object.title }}</td>
+                            <td>{{ object.start_date|date:"d/m/Y" }}</td>
+                            <td>{{ object.due_date|date:"d/m/Y" }}</td>
+                            <td>{{ object.end_date|date:"d/m/Y" }}</td>
+                            <td>{{ object.sla }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="widget stacked">
+
+            <div class="widget-header">
+                <i class="icon-ticket"></i>
+                <h3>Histórico</h3>
+            </div>
+
+            <div class="widget-content">
+                <ul class="timeline">
+                    {% for history in object.history.all %}
+                    <li {% if forloop.counter|divisibleby:2 %}class="timeline-inverted"{% endif %}>
+                        <div class="timeline-badge">
+                          <i class="icon icon-user"></i>
+                        </div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                              <h4 class="timeline-title">{{ history.get_state_display }}</h4>
+                              <p>
+                                <small class="text-muted">
+                                    <i class="icon icon-calendar"></i>
+                                    {{ history.start_date|date:"d/m/Y" }} - {{ history.end_date|date:"d/m/Y" }}
+                                </small>
+                              </p>
+                            </div>
+                            <div class="timeline-body">
+                              <p>{{ history.note }}</p>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
