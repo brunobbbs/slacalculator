@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django_extensions',
     'core',
     'utils',
 )
@@ -149,6 +150,11 @@ SERVER_EMAIL = ''
 
 DATE_INPUT_FORMATS = (
     "%d/%m/%Y", "%d/%m/%y"
+)
+
+DATETIME_INPUT_FORMATS = (
+    "%d/%m/%Y %H:%M:%S",
+    "%d/%m/%Y %H:%M"
 )
 
 try:
