@@ -49,7 +49,7 @@
                                         </a>
                                         {{ object.identifier }}
                                     </td>
-                                    <td><a href="">{{ object.title }}</a></td>
+                                    <td><a href="{% url 'tickets:view' object.pk %}">{{ object.title }}</a></td>
                                     <td>{{ object.start_date|date:"d/m/Y" }}</td>
                                     <td>{{ object.due_date|date:"d/m/Y" }}</td>
                                     <td>{{ object.latest_status }}</td>
