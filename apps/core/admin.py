@@ -16,20 +16,20 @@ class SlaAdmin(admin.ModelAdmin):
 
 class StatusAdmin(admin.ModelAdmin):
 
-    list_display = ("title", )
+    list_display = ("ticket", "added")
 
 
 class TicketAdmin(admin.ModelAdmin):
 
     search_fields = ("identifier", "title")
-    list_display = ("identifier", "title", "start_date", "end_date", "sla", "status")
-    list_filter = ("status", )
+    list_display = ("identifier", "title", "start_date", "end_date", "sla")
+    # list_filter = ("status", )
 
 
 class BreakAdmin(admin.ModelAdmin):
 
     list_display = ("ticket", "date", "reason")
-    list_filter = ("status", )
+    # list_filter = ("status", )
 
 
 admin.site.register(Queue, QueueAdmin)
