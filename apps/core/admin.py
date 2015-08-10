@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Queue, Sla, Status, Ticket, Break
+from .models import Queue, Sla, Status, Ticket
 
 
 class QueueAdmin(admin.ModelAdmin):
@@ -16,7 +16,8 @@ class SlaAdmin(admin.ModelAdmin):
 
 class StatusAdmin(admin.ModelAdmin):
 
-    list_display = ("ticket", "added")
+    list_display = ("ticket", "state", "start_date", "end_date", "interruption")
+    list_filter = ("interruption", )
 
 
 class TicketAdmin(admin.ModelAdmin):
@@ -26,14 +27,7 @@ class TicketAdmin(admin.ModelAdmin):
     # list_filter = ("status", )
 
 
-class BreakAdmin(admin.ModelAdmin):
-
-    list_display = ("ticket", "date", "reason")
-    # list_filter = ("status", )
-
-
 admin.site.register(Queue, QueueAdmin)
 admin.site.register(Sla, SlaAdmin)
 admin.site.register(Status, StatusAdmin)
 admin.site.register(Ticket, TicketAdmin)
-admin.site.register(Break, BreakAdmin)
