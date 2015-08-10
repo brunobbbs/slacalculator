@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from utils.choice import Choice
-from workdays import workday
+from workdays import workday, networkdays
 
 
 @python_2_unicode_compatible
@@ -97,66 +97,55 @@ class Ticket(models.Model):
     def __str__(self):
         return self.title
 
+    def _get_interruption_days(self):
+        count = 0
+        interruptions = self.history.filter(interruption=True)
+        for interrupt in interruptions:
+            if interrupt.end_date:
+                calc = interrupt.end_date - interrupt.start_date
+                if calc.days >= 1:
+                    work_days = networkdays(interrupt.start_date, interrupt.end_date)
+                    count += work_days
+        return count
+
     def latest_status(self):
-        status = Status.objects.select_related("ticket").filter(ticket=self).last()
+        status = Status.objects.select_related("ticket").filter(ticket=self).first()
         return status
 
     def due_date(self):
         max = self.sla.days_budget + self.sla.days_start_attendance + self.sla.days_delivery
+        break_days = self._get_interruption_days()
+        max += break_days
         due_date = workday(self.start_date, max)
         return due_date
 
 
 class StatusChoice(Choice):
-    OPEN = "open", _("Aberto")
-    WORKING = "working", _("Em andamento")
-    CLOSED = "closed", _("Fechado")
-    W_CLIENT = "waiting_client", _("Aguardando cliente")
-    W_RESOURCES = "waiting_resources", _("Aguardando recursos")
-    W_SUPPLIER = "waiting_supplier", _("Aguardando fornecedor")
-    W_USER = "waiting_user", _("Aguardando usuário")
+    OPEN = u"open", _("Aberto")
+    WORKING = u"working", _("Em andamento")
+    CLOSED = u"closed", _("Fechado")
+    W_USER = u"waiting_user", _("Aguardando usuário")
+    W_CLIENT = u"waiting_client", _("Aguardando cliente")
+    W_RESOURCES = u"waiting_resources", _("Aguardando recursos")
+    W_SUPPLIER = u"waiting_supplier", _("Aguardando fornecedor")
 
 
 @python_2_unicode_compatible
 class Status(models.Model):
 
-    type = models.CharField(_("Tipo"), max_length=20, choices=StatusChoice, default=StatusChoice.OPEN)
-    note = models.TextField(_("Observações"), blank=True)
-    added = models.DateTimeField(_("Adicionado"), auto_now_add=True)
     ticket = models.ForeignKey(Ticket, related_name="history")
+    state = models.CharField(_("Status"), max_length=20, default="open", choices=StatusChoice)
+    note = models.TextField(_("Observações"), blank=True)
+    start_date = models.DateField(_("Data"))
+    end_date = models.DateField(_("Finalizado"), blank=True, null=True)
+    modified = models.DateTimeField(_("Modificado"), auto_now=True)
+    interruption = models.BooleanField(_("Interrupção"), default=False)
 
     class Meta:
         db_table = "status"
-        verbose_name = _("Estado")
-        verbose_name_plural = _("Estados")
-        ordering = ["-added", ]
+        verbose_name = _("Status")
+        verbose_name_plural = _("Status")
+        ordering = ["-modified", ]
 
     def __str__(self):
-        return self.get_type_display()
-
-
-@python_2_unicode_compatible
-class Break(models.Model):
-
-    ticket = models.ForeignKey(Ticket, related_name="breaks")
-    date = models.DateField(_("Data"))
-    reason = models.CharField(
-        _("Motivo"),
-        help_text=_("Informe o motivo da interrupção no SLA."),
-        max_length=100
-    )
-    status = models.CharField(
-        _("Estado"),
-        max_length=20,
-        choices=StatusChoice,
-        default=StatusChoice.W_USER,
-        help_text=_("Informe o novo estado do ticket após a interrupção.")
-    )
-
-    class Meta:
-        db_table = "break"
-        verbose_name = _("Interrupção")
-        verbose_name_plural = _("Interrupções")
-
-    def __str__(self):
-        return self.date
+        return self.get_state_display()
