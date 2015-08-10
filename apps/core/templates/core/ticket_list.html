@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Tickets cadastrados{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{% static 'js/plugins/datatables/media/css/jquery.dataTables.min.css' %}"/>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="active">Tickets</li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="widget stacked">
+
+                <div class="widget-header">
+                    <i class="icon-ticket"></i>
+                    <h3>Tickets cadastrados</h3>
+                </div>
+
+                <div class="widget-content">
+                    <table id="tickets_list" class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Demanda</th>
+                                <th>Abertura</th>
+                                <th>Previsão de entrega</th>
+                                <th>Estado</th>
+                                <th>SLA</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for object in object_list %}
+                                <tr>
+                                    <td><a href="">{{ object.identifier }}</a></td>
+                                    <td>{{ object.title }}</td>
+                                    <td>{{ object.start_date|date:"d/m/Y" }}</td>
+                                    <td>DD/MM/YYYY</td>
+                                    <td>{{ object.latest_status }}</td>
+                                    <td>{{ object.sla }}</td>
+                                    <td>
+                                        <a class="btn btn-xs btn-danger"
+                                           href="javascript:;" title="Interrupção"
+                                           data-toggle="tooltip" data-placement="bottom">
+                                            <i class="btn-icon-only icon-stop"></i>
+                                        </a>
+                                        <a class="btn btn-xs btn-primary"
+                                           href="{% url 'tickets:update' object.pk %}" title="Editar"
+                                           data-toggle="tooltip" data-placement="bottom">
+                                            <i class="btn-icon-only icon-pencil"></i>
+                                        </a>
+                                        <a class="btn btn-xs btn-success"
+                                           href="javascript:;" title="Fechar"
+                                           data-toggle="tooltip" data-placement="bottom">
+                                            <i class="btn-icon-only icon-ok"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td>Nenhum ticket cadastrado</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static 'js/plugins/datatables/media/js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+            $("#tickets_list").DataTable({
+                language: {
+                    url: "{% static 'js/plugins/datatables/pt_BR.json' %}"
+                }
+            });
+        });
+    </script>
+{% endblock %}
