@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+from utils.choice import Choice
 
 
 @python_2_unicode_compatible
@@ -65,20 +66,6 @@ class Sla(models.Model):
 
 
 @python_2_unicode_compatible
-class Status(models.Model):
-
-    title = models.CharField(_("Título"), max_length=30)
-
-    class Meta:
-        db_table = "status"
-        verbose_name = _("Estado")
-        verbose_name_plural = _("Estados")
-
-    def __str__(self):
-        return self.title
-
-
-@python_2_unicode_compatible
 class Ticket(models.Model):
 
     identifier = models.CharField(
@@ -92,7 +79,6 @@ class Ticket(models.Model):
     )
     start_date = models.DateField(
         _("Data de abertura"),
-        auto_now_add=True
     )
     end_date = models.DateField(
         _("Data de encerramento"),
@@ -100,15 +86,47 @@ class Ticket(models.Model):
         null=True
     )
     sla = models.ForeignKey(Sla, related_name="tickets", verbose_name=_("SLA"))
-    status = models.ForeignKey(Status, related_name="tickets", verbose_name=_("Estado"))
 
     class Meta:
         db_table = "ticket"
         verbose_name = _("Ticket")
         verbose_name_plural = _("Tickets")
+        ordering = ["-start_date", "-end_date"]
 
     def __str__(self):
         return self.title
+
+    def latest_status(self):
+        status = Status.objects.select_related("ticket").filter(ticket=self).last()
+        return status
+
+
+class StatusChoice(Choice):
+    OPEN = "open", _("Aberto")
+    WORKING = "working", _("Em andamento")
+    CLOSED = "closed", _("Fechado")
+    W_CLIENT = "waiting_client", _("Aguardando cliente")
+    W_RESOURCES = "waiting_resources", _("Aguardando recursos")
+    W_SUPPLIER = "waiting_supplier", _("Aguardando fornecedor")
+    W_USER = "waiting_user", _("Aguardando usuário")
+
+
+@python_2_unicode_compatible
+class Status(models.Model):
+
+    type = models.CharField(_("Tipo"), max_length=20, choices=StatusChoice, default=StatusChoice.OPEN)
+    note = models.TextField(_("Observações"), blank=True)
+    added = models.DateTimeField(_("Adicionado"), auto_now_add=True)
+    ticket = models.ForeignKey(Ticket, related_name="history")
+
+    class Meta:
+        db_table = "status"
+        verbose_name = _("Estado")
+        verbose_name_plural = _("Estados")
+        ordering = ["-added", ]
+
+    def __str__(self):
+        return self.get_type_display()
 
 
 @python_2_unicode_compatible
@@ -121,10 +139,11 @@ class Break(models.Model):
         help_text=_("Informe o motivo da interrupção no SLA."),
         max_length=100
     )
-    status = models.ForeignKey(
-        Status,
-        related_name="breaks",
-        verbose_name=_("Estado"),
+    status = models.CharField(
+        _("Estado"),
+        max_length=20,
+        choices=StatusChoice,
+        default=StatusChoice.W_USER,
         help_text=_("Informe o novo estado do ticket após a interrupção.")
     )
 
