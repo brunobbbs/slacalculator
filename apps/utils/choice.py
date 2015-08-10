@@ -2,6 +2,10 @@ import inspect
 
 
 class Choice(object):
+    """
+    extracted from:
+    http://tomforb.es/using-python-metaclasses-to-make-awesome-django-model-field-choices
+    """
     class __metaclass__(type):
         def __init__(self, *args, **kwargs):
             self._data = []
