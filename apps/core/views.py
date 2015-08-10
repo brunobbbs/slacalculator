@@ -39,6 +39,19 @@ class TicketListView(ListView):
 
     model = Ticket
 
+    def get_queryset(self):
+        queryset = super(TicketListView, self).get_queryset()
+        queryset = queryset.exclude(history__state="closed")
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        kwargs = super(TicketListView, self).get_context_data(**kwargs)
+        closed_tickets = Ticket.objects.all().filter(history__state="closed")
+        kwargs.update({
+            "closed_tickets": closed_tickets
+        })
+        return kwargs
+
 
 class TicketUpdateView(UpdateView):
 
