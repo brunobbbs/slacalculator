@@ -105,7 +105,7 @@ class Ticket(models.Model):
                 calc = interrupt.end_date - interrupt.start_date
                 if calc.days >= 1:
                     work_days = networkdays(interrupt.start_date, interrupt.end_date)
-                    count += work_days
+                    count += work_days - 1
         return count
 
     def latest_status(self):
@@ -145,7 +145,7 @@ class Status(models.Model):
         db_table = "status"
         verbose_name = _("Status")
         verbose_name_plural = _("Status")
-        ordering = ["-modified", ]
+        ordering = ["-start_date", "-modified"]
 
     def __str__(self):
         return self.get_state_display()
