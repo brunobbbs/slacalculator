@@ -10,7 +10,7 @@ from django.views.generic import (
 from django.core.urlresolvers import reverse
 
 from core.forms import TicketForm
-from .models import Ticket
+from .models import Ticket, Status
 
 
 class HomePageView(TemplateView):
@@ -35,8 +35,16 @@ class TicketListView(ListView):
 class TicketUpdateView(UpdateView):
 
     model = Ticket
-    success_url = "tickets:list"
     form_class = TicketForm
+
+    def get_success_url(self):
+        return reverse("tickets:list")
+
+
+class StatusCreateView(CreateView):
+
+    model = Status
+    form_class = None  # TODO: Add form_class
 
     def get_success_url(self):
         return reverse("tickets:list")
