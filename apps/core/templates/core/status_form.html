@@ -7,7 +7,7 @@
 
 {% block breadcrumbs %}
     <li><a href="{% url 'tickets:list' %}">Tickets</a></li>
-    <li><a href="#">{{ ticket }}</a></li>
+    <li><a href="{% url 'tickets:view' ticket.pk %}">{{ ticket }}</a></li>
     <li class="active">Novo status</li>
 {% endblock %}
 
