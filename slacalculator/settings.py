@@ -147,6 +147,10 @@ EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = ''
 SERVER_EMAIL = ''
 
+DATE_INPUT_FORMATS = (
+    "%d/%m/%Y", "%d/%m/%y"
+)
+
 try:
     from settings_local import *
 except ImportError:
