@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -58,10 +60,35 @@ class TicketForm(forms.ModelForm):
             if not obj.pk:
                 obj.save()
                 status = Status(
-                    type="open",
-                    ticket=obj
+                    state="open",
+                    ticket=obj,
+                    start_date=datetime.now()
                 )
                 status.save()
                 return obj
+            obj.save()
+        return obj
+
+
+class StatusForm(forms.ModelForm):
+
+    class Meta:
+        model = Status
+        fields = ("ticket", "state", "note", "start_date")
+        exclude = ("end_date", "interruption", "modified")
+        widgets = {
+            'ticket': forms.HiddenInput(),
+            'state': forms.HiddenInput(),
+            'note': forms.Textarea(attrs={'class': 'form-control'}),
+            'start_date': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def save(self, commit=True):
+        obj = super(StatusForm, self).save(commit=False)
+        if commit:
+            interruptions = ["waiting_user", "waiting_supplier",
+                             "waiting_client", "waiting_resources"]
+            if obj.state in interruptions:
+                obj.interruption = True
             obj.save()
         return obj
