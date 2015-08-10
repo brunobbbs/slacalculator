@@ -3,6 +3,7 @@
 django==1.8.3
 django-staticfiles
 django-secure
+django-extensions
 
 # PIL
 # apt-get install libjpeg-dev libfreetype6-dev zlib1g-dev libpng12-dev
