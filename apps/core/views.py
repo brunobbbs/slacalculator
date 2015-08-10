@@ -6,7 +6,8 @@ from django.views.generic import (
     TemplateView,
     CreateView,
     ListView,
-    UpdateView
+    UpdateView,
+    DetailView
 )
 
 from django.core.urlresolvers import reverse
@@ -18,6 +19,11 @@ from .models import Ticket, Status, StatusChoice
 class HomePageView(TemplateView):
 
     template_name = 'core/index.html'
+
+
+class TicketDetailView(DetailView):
+
+    model = Ticket
 
 
 class TicketCreateView(CreateView):
@@ -72,7 +78,9 @@ class ChangeStatusView(CreateView):
 
     def form_valid(self, form):
         current_status = self.get_object()
-        current_status.end_date = datetime.now()
+        form_kwargs = self.get_form_kwargs()['data']
+        date = map(int, form_kwargs['start_date'].split("/"))
+        current_status.end_date = datetime(date[2], date[1], date[0])
         current_status.save()
 
         state = self.request.GET.get("status")
