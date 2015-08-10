@@ -133,7 +133,7 @@ class Status(models.Model):
 class Break(models.Model):
 
     ticket = models.ForeignKey(Ticket, related_name="breaks")
-    date = models.DateField(_("Data"), auto_now_add=True)
+    date = models.DateField(_("Data"))
     reason = models.CharField(
         _("Motivo"),
         help_text=_("Informe o motivo da interrupção no SLA."),
