@@ -112,8 +112,8 @@
 						</a>
 
 						<ul class="dropdown-menu">
-							<li><a href="#">Novo</a></li>
-                            <li><a href="#">Listar todos</a></li>
+							<li><a href="{% url 'tickets:add' %}">Novo</a></li>
+                            <li><a href="{% url 'tickets:list' %}">Listar todos</a></li>
                             <li><a href="#">Sustentação</a></li>
                             <li><a href="#">Desenvolvimento</a></li>
 							<li><a href="#">Projetos</a></li>
@@ -193,6 +193,8 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{% static 'js/libs/jquery-1.9.1.min.js' %}"></script>
 <script src="{% static 'js/libs/jquery-ui-1.10.0.custom.min.js' %}"></script>
+<script src="{% static 'js/plugins/datepicker/datepicker-pt-BR.js' %}"></script>
+<script src="{% static 'js/plugins/mask/jquery.mask.js' %}"></script>
 <script src="{% static 'js/libs/bootstrap.min.js' %}"></script>
 
 <script src="{% static 'js/plugins/flot/jquery.flot.js' %}"></script>
@@ -201,6 +203,11 @@
 
 <script src="{% static 'js/Application.js' %}"></script>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.datepicker.setDefaults( $.datepicker.regional[ "pt-BR" ] );
+    });
+</script>
 
 {% block js %}
 
