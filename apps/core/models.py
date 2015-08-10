@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from utils.choice import Choice
+from workdays import workday
 
 
 @python_2_unicode_compatible
@@ -99,6 +100,11 @@ class Ticket(models.Model):
     def latest_status(self):
         status = Status.objects.select_related("ticket").filter(ticket=self).last()
         return status
+
+    def due_date(self):
+        max = self.sla.days_budget + self.sla.days_start_attendance + self.sla.days_delivery
+        due_date = workday(self.start_date, max)
+        return due_date
 
 
 class StatusChoice(Choice):
