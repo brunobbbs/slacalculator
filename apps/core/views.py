@@ -41,12 +41,12 @@ class TicketListView(ListView):
 
     def get_queryset(self):
         queryset = super(TicketListView, self).get_queryset()
-        queryset = queryset.exclude(history__state="closed")
+        queryset = queryset.exclude(state="closed")
         return queryset
 
     def get_context_data(self, **kwargs):
         kwargs = super(TicketListView, self).get_context_data(**kwargs)
-        closed_tickets = Ticket.objects.all().filter(history__state="closed")
+        closed_tickets = Ticket.objects.all().filter(state="closed")
         kwargs.update({
             "closed_tickets": closed_tickets
         })
@@ -90,18 +90,23 @@ class ChangeStatusView(CreateView):
         return kwargs
 
     def form_valid(self, form):
+
+        # date setup for current status and new status
         current_status = self.get_object()
         form_kwargs = self.get_form_kwargs()['data']
         date = map(int, form_kwargs['start_date'].split("/"))
+        # end date of current status is equal to start date of new status
         current_status.end_date = datetime(date[2], date[1], date[0])
         current_status.save()
 
         state = self.request.GET.get("status")
         ticket = self.get_ticket()
         if state == "closed":
+            ticket.close()
             ticket.end_date = datetime.now()
             ticket.save()
         else:
+            getattr(ticket, state)()
             ticket.end_date = None
             ticket.save()
         return super(ChangeStatusView, self).form_valid(form)

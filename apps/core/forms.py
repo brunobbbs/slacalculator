@@ -24,7 +24,7 @@ class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ("identifier", "title", "start_date", "sla")
-        exclude = ("end_date", )
+        exclude = ("end_date", "state")
         widgets = {
             'identifier': forms.TextInput(
                 attrs={

@@ -7,6 +7,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from utils.choice import Choice
 from workdays import workday, networkdays
+from django_fsm import FSMField, transition
 
 
 @python_2_unicode_compatible
@@ -66,6 +67,16 @@ class Sla(models.Model):
         return self.service
 
 
+class StatusChoice(Choice):
+    OPEN = u"open", _("Aberto")
+    WORKING = u"working", _("Em andamento")
+    CLOSED = u"closed", _("Fechado")
+    W_USER = u"waiting_user", _("Aguardando usuário")
+    W_CLIENT = u"waiting_client", _("Aguardando cliente")
+    W_RESOURCES = u"waiting_resources", _("Aguardando recursos")
+    W_SUPPLIER = u"waiting_supplier", _("Aguardando fornecedor")
+
+
 @python_2_unicode_compatible
 class Ticket(models.Model):
 
@@ -87,6 +98,7 @@ class Ticket(models.Model):
         null=True
     )
     sla = models.ForeignKey(Sla, related_name="tickets", verbose_name=_("SLA"))
+    state = FSMField(_("Status"), choices=StatusChoice, default=StatusChoice.OPEN)
 
     class Meta:
         db_table = "ticket"
@@ -119,15 +131,33 @@ class Ticket(models.Model):
         due_date = workday(self.start_date, max)
         return due_date
 
+    @transition(field=state, source="closed", target="open")
+    def open(self):
+        pass
 
-class StatusChoice(Choice):
-    OPEN = u"open", _("Aberto")
-    WORKING = u"working", _("Em andamento")
-    CLOSED = u"closed", _("Fechado")
-    W_USER = u"waiting_user", _("Aguardando usuário")
-    W_CLIENT = u"waiting_client", _("Aguardando cliente")
-    W_RESOURCES = u"waiting_resources", _("Aguardando recursos")
-    W_SUPPLIER = u"waiting_supplier", _("Aguardando fornecedor")
+    @transition(field=state, source="*", target="working")
+    def working(self):
+        pass
+
+    @transition(field=state, source="*", target="closed")
+    def close(self):
+        pass
+
+    @transition(field=state, source="*", target="waiting_user")
+    def waiting_user(self):
+        pass
+
+    @transition(field=state, source="*", target="waiting_client")
+    def waiting_client(self):
+        pass
+
+    @transition(field=state, source="*", target="waiting_resources")
+    def waiting_resoures(self):
+        pass
+
+    @transition(field=state, source="*", target="waiting_supplier")
+    def waiting_supplier(self):
+        pass
 
 
 @python_2_unicode_compatible
