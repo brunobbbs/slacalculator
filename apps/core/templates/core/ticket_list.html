@@ -42,7 +42,7 @@
                             {% for object in object_list %}
                                 <tr>
                                     <td>
-                                        <a class="btn btn-xs btn-primary text-right"
+                                        <a class="btn btn-xs btn-info text-right"
                                            href="{% url 'tickets:update' object.pk %}" title="Editar"
                                            data-toggle="tooltip" data-placement="bottom">
                                             <i class="btn-icon-only icon-pencil"></i>
@@ -52,7 +52,7 @@
                                     <td><a href="{% url 'tickets:view' object.pk %}">{{ object.title }}</a></td>
                                     <td>{{ object.start_date|date:"d/m/Y" }}</td>
                                     <td>{{ object.due_date|date:"d/m/Y" }}</td>
-                                    <td>{{ object.latest_status }}</td>
+                                    <td>{{ object.get_state_display }}</td>
                                     <td>{{ object.sla }}</td>
                                     <td>
                                         <div class="btn-group">
@@ -62,10 +62,32 @@
                                                 <span class="caret"> </span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_user">Aguardando usuário</a></li>
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_client">Aguardando cliente</a></li>
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_resources">Aguardando recursos</a></li>
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_supplier">Aguardando fornecedor</a></li>
+                                                <li class="dropdown-header">Interrupções de SLA</li>
+                                                <li role="separator" class="divider"></li>
+                                                <li>
+                                                    <a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_user">
+                                                        <i class="icon icon-user"></i>
+                                                        Aguardando usuário
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_client">
+                                                        <i class="icon icon-shield"></i>
+                                                        Aguardando cliente
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_resources">
+                                                        <i class="icon icon-tasks"></i>
+                                                        Aguardando recursos
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_supplier">
+                                                        <i class="icon icon-group"></i>
+                                                        Aguardando fornecedor
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </div>
                                         <a class="btn btn-xs btn-success"
@@ -76,13 +98,13 @@
                                            data-toggle="tooltip" data-placement="bottom">
                                             <i class="btn-icon-only icon-play"></i>
                                         </a>
-                                        <a class="btn btn-xs btn-info"
+                                        <a class="btn btn-xs btn-primary"
                                            {% if object.latest_status.state == "closed" %}
                                            disabled="true"
                                            {% endif %}
                                            href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=closed" title="Fechar"
                                            data-toggle="tooltip" data-placement="bottom">
-                                            <i class="btn-icon-only icon-ok"></i>
+                                            <i class="btn-icon-only icon-lock"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -101,7 +123,7 @@
                     </table>
                 </div>
 
-            </div>
+            </div>"waiting_supplier"
 
         </div>
 
@@ -135,7 +157,7 @@
                             {% for object in closed_tickets %}
                                 <tr>
                                     <td>
-                                        <a class="btn btn-xs btn-primary text-right"
+                                        <a class="btn btn-xs btn-info text-right"
                                            href="{% url 'tickets:update' object.pk %}" title="Editar"
                                            data-toggle="tooltip" data-placement="bottom">
                                             <i class="btn-icon-only icon-pencil"></i>
@@ -148,34 +170,13 @@
                                     <td>{{ object.end_date|date:"d/m/Y" }}</td>
                                     <td>{{ object.sla }}</td>
                                     <td>
-                                        <div class="btn-group">
-                                            <button class="btn btn-xs btn-danger dropdown-toggle"
-                                                    data-toggle="dropdown" type="button">
-                                                <i class="btn-icon-only icon-stop"></i>
-                                                <span class="caret"> </span>
-                                            </button>
-                                            <ul class="dropdown-menu" role="menu">
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_user">Aguardando usuário</a></li>
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_client">Aguardando cliente</a></li>
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_resources">Aguardando recursos</a></li>
-                                                <li><a href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=waiting_supplier">Aguardando fornecedor</a></li>
-                                            </ul>
-                                        </div>
-                                        <a class="btn btn-xs btn-success"
-                                           {% if object.latest_status.state == "working" %}
+                                        <a class="btn btn-xs btn-primary"
+                                           {% if object.latest_status.state == "open" %}
                                            disabled="true"
                                            {% endif %}
-                                           href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=working" title="Em andamento"
+                                           href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=open" title="Reabrir ticket"
                                            data-toggle="tooltip" data-placement="bottom">
-                                            <i class="btn-icon-only icon-play"></i>
-                                        </a>
-                                        <a class="btn btn-xs btn-info"
-                                           {% if object.latest_status.state == "closed" %}
-                                           disabled="true"
-                                           {% endif %}
-                                           href="{% url 'tickets:status_update' object.latest_status.pk %}?ticket={{ object.pk }}&status=closed" title="Fechar"
-                                           data-toggle="tooltip" data-placement="bottom">
-                                            <i class="btn-icon-only icon-ok"></i>
+                                            <i class="btn-icon-only icon-unlock-alt"></i>
                                         </a>
                                     </td>
                                 </tr>
