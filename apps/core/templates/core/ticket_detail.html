@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load history_labels %}
 
 {% block title %}Tickets cadastrados{% endblock %}
 
@@ -72,8 +73,8 @@
                 <ul class="timeline">
                     {% for history in object.history.all %}
                     <li {% if forloop.counter|divisibleby:2 %}class="timeline-inverted"{% endif %}>
-                        <div class="timeline-badge">
-                          <i class="icon icon-user"></i>
+                        <div class="timeline-badge {{ history.state|badge_color }}">
+                          <i class="icon {{ history.state|icon_label }}"></i>
                         </div>
                         <div class="timeline-panel">
                             <div class="timeline-heading">
